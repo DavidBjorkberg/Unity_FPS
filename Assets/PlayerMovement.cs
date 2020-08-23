@@ -12,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Move()
     {
-        Vector3 movementInput = new Vector3(-Input.GetAxisRaw("Vertical"), 0, Input.GetAxisRaw("Horizontal")).normalized;
+        Vector3 movementInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
         Vector3 walkDir = movementInput.x * transform.right + movementInput.z * transform.forward;
         characterController.Move(walkDir * movementSpeed * Time.deltaTime);
     }
