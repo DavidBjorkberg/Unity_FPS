@@ -8,11 +8,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        Move();
     }
-    void Move()
+    public void Move(float horizontalMove, float verticalMove)
     {
-        Vector3 movementInput = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical")).normalized;
+        Vector3 movementInput = new Vector3(horizontalMove, 0, verticalMove).normalized;
         Vector3 walkDir = movementInput.x * transform.right + movementInput.z * transform.forward;
         characterController.Move(walkDir * movementSpeed * Time.deltaTime);
     }

@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class RayGenerator : MonoBehaviour
 {
-    Mesh mesh;
-    Vector3[] vertices;
-    int[] indices;
-    float raySize = 0.1f;
-    public GameObject gun;
+    public GunHandler gunHandler;
     public Material rayMaterial;
+    public GameObject gunHolder;
     public Material enemyHitRayMaterial;
+    private Mesh mesh;
+    private Vector3[] vertices;
+    private int[] indices;
+    private float raySize = 0.05f;
     void Start()
     {
         mesh = new Mesh();
@@ -18,9 +19,10 @@ public class RayGenerator : MonoBehaviour
         GetComponent<MeshRenderer>().material = rayMaterial;
         mesh.RecalculateBounds();
     }
-    public void DrawMesh(Vector3 pointA, Vector3 pointB, Vector3 pointC, bool hitEnemy)
+    public void DrawMesh(Vector3 pointA, Vector3 pointB, Vector3 pointC,Vector3 BToCLeftVector, bool hitEnemy)
     {
         mesh.Clear();
+        GameObject gun = gunHandler.currentGun.gameObject;
         if (hitEnemy)
         {
             GetComponent<MeshRenderer>().material = enemyHitRayMaterial;
@@ -29,30 +31,42 @@ public class RayGenerator : MonoBehaviour
         {
             GetComponent<MeshRenderer>().material = rayMaterial;
         }
-        //Prevent (mostly) the mesh intersecting with the hit collider
-        Vector3 nonIntersectPointB = pointB - (pointB - pointA).normalized * raySize;
-        Vector3 nonIntersectPointC = pointC - (pointC - pointB).normalized * raySize;
+        //Move pointB/C away from the wall to prevent it clipping with it.
+        Vector3 noClipPointB = pointB + (pointA - pointB).normalized * 0.1f;
+        Vector3 noClipPointC = pointC + (pointB - pointC).normalized * 0.1f;
 
-        Vector3 bottomLeftCorner = -gun.transform.up * raySize - gun.transform.right * raySize;
-        Vector3 bottomRightCorner = -gun.transform.up * raySize + gun.transform.right * raySize;
-        Vector3 topLeftCorner = gun.transform.up * raySize - gun.transform.right * raySize;
-        Vector3 topRightCorner = gun.transform.up * raySize + gun.transform.right * raySize;
+        Vector3 gunBottomLeftCorner = -gun.transform.up * raySize - gun.transform.right * raySize;
+        Vector3 gunBottomRightCorner = -gun.transform.up * raySize + gun.transform.right * raySize;
+        Vector3 gunTopLeftCorner = gun.transform.up * raySize - gun.transform.right * raySize;
+        Vector3 gunTopRightCorner = gun.transform.up * raySize + gun.transform.right * raySize;
 
-        //TODO: Waste to create all vertices and indices when the ray doesn't hit anything
+        Vector3 BToC = (pointC - pointB).normalized;
+        Vector3 BToCDown = Vector3.Cross(BToC, BToCLeftVector);
+        Vector3 BToCBottomLeftCorner = BToCLeftVector * raySize + BToCDown * raySize;
+        Vector3 BToCBottomRightCorner = -BToCLeftVector * raySize + BToCDown * raySize;
+        Vector3 BToCTopLeftCorner = BToCLeftVector * raySize - BToCDown * raySize;
+        Vector3 BToCTopRightCorner = -BToCLeftVector * raySize - BToCDown * raySize;
+
+        
+            //TODO: Waste to create all vertices and indices when the ray doesn't hit anything
         vertices = new Vector3[]
         {
-            gun.transform.InverseTransformPoint(pointA + bottomLeftCorner), //0
-            gun.transform.InverseTransformPoint(pointA + bottomRightCorner), //1
-            gun.transform.InverseTransformPoint(pointA + topLeftCorner),    //2
-            gun.transform.InverseTransformPoint(pointA + topRightCorner),   //3
-            gun.transform.InverseTransformPoint(pointB + bottomLeftCorner), //4
-            gun.transform.InverseTransformPoint(pointB + bottomRightCorner), //5
-            gun.transform.InverseTransformPoint(pointB + topLeftCorner),    //6
-            gun.transform.InverseTransformPoint(pointB + topRightCorner),   //7
-            gun.transform.InverseTransformPoint(pointC + bottomLeftCorner),//8
-            gun.transform.InverseTransformPoint(pointC + bottomRightCorner),//9
-            gun.transform.InverseTransformPoint(pointC + topLeftCorner),    //10
-            gun.transform.InverseTransformPoint(pointC + topRightCorner),   //11
+            gun.transform.InverseTransformPoint(pointA + gunBottomLeftCorner), //0
+            gun.transform.InverseTransformPoint(pointA + gunBottomRightCorner), //1
+            gun.transform.InverseTransformPoint(pointA + gunTopLeftCorner),    //2
+            gun.transform.InverseTransformPoint(pointA + gunTopRightCorner),   //3
+            gun.transform.InverseTransformPoint(noClipPointB + gunBottomLeftCorner), //4
+            gun.transform.InverseTransformPoint(noClipPointB + gunBottomRightCorner), //5
+            gun.transform.InverseTransformPoint(noClipPointB + gunTopLeftCorner),    //6
+            gun.transform.InverseTransformPoint(noClipPointB + gunTopRightCorner),   //7
+            gun.transform.InverseTransformPoint(noClipPointB + BToCBottomLeftCorner),//8
+            gun.transform.InverseTransformPoint(noClipPointB + BToCBottomRightCorner),//9
+            gun.transform.InverseTransformPoint(noClipPointB + BToCTopLeftCorner),    //10
+            gun.transform.InverseTransformPoint(noClipPointB + BToCTopRightCorner),   //11
+            gun.transform.InverseTransformPoint(noClipPointC + BToCBottomLeftCorner),//12
+            gun.transform.InverseTransformPoint(noClipPointC + BToCBottomRightCorner),//13
+            gun.transform.InverseTransformPoint(noClipPointC + BToCTopLeftCorner),    //14
+            gun.transform.InverseTransformPoint(noClipPointC + BToCTopRightCorner),   //15
         };
 
         indices = new int[]
@@ -77,8 +91,17 @@ public class RayGenerator : MonoBehaviour
             5,7,11,
             4,8,6, //B->C Right
             8,10,6,
-            8,10,9, //Point C
-            10,11,9
+            12,9,8 ,//B->CBottom
+            13,9,12,
+            10,11,14, //B->CTop
+            14,11,15,
+            15,9,13, //B->C Left
+            11,9,15,
+            12,8,10, //B->C right
+            14,12,10,
+            12,14,13, //PointC
+            14,15,13,
+
         };
 
         //Ray didn't hit anything , don't bounce it
