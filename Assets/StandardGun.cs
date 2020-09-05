@@ -8,19 +8,31 @@ public class StandardGun : Gun
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)
         {
-            //hitEnemy.TakeDamage(damage);
             curAmmo--;
             GameManager.instance.UpdateAmmoBar(maxAmmo, curAmmo);
             timeSinceLastShot = 0;
-            if (Physics.Raycast(pointB, (pointC - pointB), out RaycastHit hit, 1 << 10 | 1 << 11))
+            Enemy hitEnemy = HitEnemyCheck(pointA, pointB, pointC);
+            if(hitEnemy != null)
             {
-                if (hit.transform.root.TryGetComponent(out Enemy enemy))
-                {
-                    enemy.TakeDamage(damage);
-                }
+                hitEnemy.TakeDamage(damage);
             }
         }
     }
+    Enemy HitEnemyCheck(Vector3 pointA, Vector3 pointB, Vector3 pointC)
+    {
+        Enemy returnEnemy = null;
+        if (Physics.Raycast(pointA, (pointB - pointA), out RaycastHit hit, 1 << 10 | 1 << 11))
+        {
+            hit.transform.root.TryGetComponent(out returnEnemy);
+        }
+        else if (Physics.Raycast(pointB, (pointC - pointB), out hit, 1 << 10 | 1 << 11))
+        {
+            hit.transform.root.TryGetComponent(out returnEnemy);
+        }
+        return returnEnemy;
+    }
+
+
     public override void EnemyShoot(PlayerHealth player)
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)

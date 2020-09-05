@@ -46,7 +46,6 @@ public class WeaponPickup : MonoBehaviour
         {
             gunHandler.EquipGun(pickUpGun); //If secondary slot is empty and current weapon isn't the same type as pickUpGun
             Destroy(gameObject);
-           
         }
     }
     /// <summary>

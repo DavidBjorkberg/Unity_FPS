@@ -16,7 +16,7 @@ public class GunHandler : MonoBehaviour
     private Vector3 pointC;
     private Enemy hitEnemy; //Stores the enemy the ray hits (if any), this way the ray doesn't have to be recalculated for the player to shoot.
     private float rayAim;
-    private Vector3 BToLeftVector;
+    private Vector3 BToCLeftVector;
     void Start()
     {
         currentGun = InstantiateGun(startGunPrefab);
@@ -25,43 +25,38 @@ public class GunHandler : MonoBehaviour
     {
         AimRay();
         CalculateRay();
+        DrawRay();
+        SetBounceCamera();
 
     }
     void CalculateRay()
     {
         pointA = gunPoint.position;
+        pointB = Vector3.zero;
         pointC = Vector3.zero;
 
-        if (Physics.Raycast(gunPoint.position, currentGun.transform.forward, out RaycastHit hit, 30, 1 << 10 | 1 << 11))
-        {
-            hit.collider.transform.root.TryGetComponent(out hitEnemy);
-            pointB = hit.point;
+        RaycastHit pointBHit = CalculatePointB();
 
-            //If it doesn't hit an enemy, bounce
-            if (hitEnemy == null)
-            {
-                Vector3 reflectVector = Vector3.Reflect(currentGun.transform.forward, hit.normal);
-                Vector3 reflectAim = Vector3.Lerp(reflectVector, hit.normal, rayAim);
-                BToLeftVector = -Vector3.Reflect(currentGun.transform.up, hit.normal);
-                reflectAim.Normalize();
-                BToLeftVector = Vector3.Cross(reflectAim, hit.normal);
-                BToLeftVector.Normalize();
-                if (Physics.Raycast(hit.point, reflectAim, out RaycastHit reflectHit, 30, 1 << 10 | 1 << 11))
-                {
-                    reflectHit.collider.transform.root.TryGetComponent(out hitEnemy);
-                    pointC = reflectHit.point;
-                }
-                else
-                {
-                    pointC = hit.point + reflectAim * 10;
-                }
-            }
+        //If pointB was found and an enemy wasnt hit, bounce
+        if (pointB != Vector3.zero && hitEnemy == null)
+        {
+            CalculatePointC(pointBHit);
+        }
+
+    }
+    void DrawRay()
+    {
+        if (pointB != Vector3.zero)
+        {
+            ray.DrawMesh(pointA, pointB, pointC, BToCLeftVector, hitEnemy != null);
         }
         else
         {
-            pointB = gunPoint.position + currentGun.transform.forward * 10;
+            ray.ResetMesh();
         }
-        ray.DrawMesh(pointA, pointB, pointC, BToLeftVector, hitEnemy != null);
+    }
+    void SetBounceCamera()
+    {
         if (pointC != Vector3.zero)
         {
             bounceCamera.SetCamera(pointB, pointC);
@@ -83,9 +78,35 @@ public class GunHandler : MonoBehaviour
         }
         rayAim = Mathf.Clamp(rayAim, 0, 0.9f);
     }
+    RaycastHit CalculatePointB()
+    {
+        if (Physics.Raycast(gunPoint.position, currentGun.transform.forward, out RaycastHit hit, 30, 1 << 10 | 1 << 11))
+        {
+            hit.collider.transform.root.TryGetComponent(out hitEnemy);
+            pointB = hit.point;
+        }
+        return hit;
+    }
+    void CalculatePointC(RaycastHit pointBHit)
+    {
+        Vector3 reflectVector = Vector3.Reflect(currentGun.transform.forward, pointBHit.normal);
+        Vector3 reflectAim = Vector3.Lerp(reflectVector, pointBHit.normal, rayAim).normalized;
+
+        if (Physics.Raycast(pointBHit.point, reflectAim, out RaycastHit reflectHit, 30, 1 << 10 | 1 << 11))
+        {
+            reflectHit.collider.transform.root.TryGetComponent(out hitEnemy);
+            pointC = reflectHit.point;
+        }
+        else
+        {
+            pointC = pointBHit.point + reflectAim * 10;
+        }
+        //Left vector of the B->C ray
+        BToCLeftVector = Vector3.Cross(reflectAim, pointBHit.normal).normalized;
+    }
     public void Shoot()
     {
-        currentGun.Shoot(pointA,pointB,pointC);
+        currentGun.Shoot(pointA, pointB, pointC);
     }
     /// <summary>
     /// Swaps current and secondary weapon

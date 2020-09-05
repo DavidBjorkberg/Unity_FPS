@@ -17,7 +17,7 @@ public class EnemyGunHandler : MonoBehaviour
 
     void Update()
     {
-        if(playerDetection.IsPlayerInView()
+        if(playerDetection.IsPlayerInView())
         {
             Shoot();
         }

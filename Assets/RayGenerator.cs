@@ -122,4 +122,8 @@ public class RayGenerator : MonoBehaviour
             mesh.triangles = indices;
         }
     }
+    public void ResetMesh()
+    {
+        mesh.Clear();
+    }
 }
