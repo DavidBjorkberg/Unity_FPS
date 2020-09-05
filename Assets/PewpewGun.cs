@@ -10,8 +10,18 @@ public class PewpewGun : Gun
         {
            // hitEnemy.TakeDamage(damage);
             curAmmo--;
-            UIHandler.instance.UpdateAmmoText(maxAmmo,curAmmo);
+            GameManager.instance.UpdateAmmoBar(maxAmmo,curAmmo);
             timeSinceLastShot = 0;
         }
     }
+    public override void EnemyShoot(PlayerHealth player)
+    {
+        if (curAmmo > 0 && timeSinceLastShot > fireRate)
+        {
+            curAmmo--;
+            player.TakeDamage(damage);
+            timeSinceLastShot = 0;
+        }
+    }
+
 }

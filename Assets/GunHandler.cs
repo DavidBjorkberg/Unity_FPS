@@ -32,7 +32,7 @@ public class GunHandler : MonoBehaviour
         pointA = gunPoint.position;
         pointC = Vector3.zero;
 
-        if (Physics.Raycast(gunPoint.position, currentGun.transform.forward, out RaycastHit hit, 30, 1 << 10))
+        if (Physics.Raycast(gunPoint.position, currentGun.transform.forward, out RaycastHit hit, 30, 1 << 10 | 1 << 11))
         {
             hit.collider.transform.root.TryGetComponent(out hitEnemy);
             pointB = hit.point;
@@ -46,7 +46,7 @@ public class GunHandler : MonoBehaviour
                 reflectAim.Normalize();
                 BToLeftVector = Vector3.Cross(reflectAim, hit.normal);
                 BToLeftVector.Normalize();
-                if (Physics.Raycast(hit.point, reflectAim, out RaycastHit reflectHit, 30, 1 << 10))
+                if (Physics.Raycast(hit.point, reflectAim, out RaycastHit reflectHit, 30, 1 << 10 | 1 << 11))
                 {
                     reflectHit.collider.transform.root.TryGetComponent(out hitEnemy);
                     pointC = reflectHit.point;
@@ -104,7 +104,7 @@ public class GunHandler : MonoBehaviour
         gunPoint = currentGun.transform.Find("Gunpoint");
         ray.transform.parent = currentGun.transform; // Ray has to be in the guns local space
         ray.transform.localScale = Vector3.one;
-        UIHandler.instance.UpdateAmmoText(currentGun.maxAmmo, currentGun.curAmmo);
+        GameManager.instance.UpdateAmmoBar(currentGun.maxAmmo, currentGun.curAmmo);
 
     }
 
@@ -132,9 +132,9 @@ public class GunHandler : MonoBehaviour
         Gun instantiatedGun = Instantiate(gun, gunHolder.transform);
         instantiatedGun.transform.forward = gunHolder.transform.forward;
         instantiatedGun.Initialize();
+        gunPoint = instantiatedGun.transform.Find("Gunpoint");
         ray.transform.parent = instantiatedGun.transform; // Ray has to be in the guns local space
         ray.transform.localScale = Vector3.one;
-        gunPoint = instantiatedGun.transform.Find("Gunpoint");
 
         return instantiatedGun;
     }

@@ -4,21 +4,31 @@ using UnityEngine;
 
 public class StandardGun : Gun
 {
-    public ParticleSystem hitEffect;
     public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC)
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)
         {
             //hitEnemy.TakeDamage(damage);
             curAmmo--;
-            UIHandler.instance.UpdateAmmoText(maxAmmo, curAmmo);
+            GameManager.instance.UpdateAmmoBar(maxAmmo, curAmmo);
             timeSinceLastShot = 0;
-            if (Physics.Raycast(pointB, (pointC - pointB), out RaycastHit hit))
+            if (Physics.Raycast(pointB, (pointC - pointB), out RaycastHit hit, 1 << 10 | 1 << 11))
             {
-               GameObject instantiatedPS = Instantiate(hitEffect, pointC, Quaternion.identity).gameObject;
-                instantiatedPS.transform.up = hit.normal;
-
+                if (hit.transform.root.TryGetComponent(out Enemy enemy))
+                {
+                    enemy.TakeDamage(damage);
+                }
             }
+        }
+    }
+    public override void EnemyShoot(PlayerHealth player)
+    {
+        if (curAmmo > 0 && timeSinceLastShot > fireRate)
+        {
+            muzzleFlash.Play();
+            curAmmo--;
+            player.TakeDamage(damage);
+            timeSinceLastShot = 0;
         }
     }
 }

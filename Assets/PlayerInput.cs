@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour
     {
         if (Physics.Raycast(transform.position, playerCamera.transform.forward,out RaycastHit hit, 2,weaponPickUpLayer))
         {
-            UIHandler.instance.ShowPickUpText();
+            GameManager.instance.ShowPickUpText();
             if(Input.GetKeyDown(pickUpButton))
             {
                 hit.transform.GetComponent<WeaponPickup>().PickUpWeapon(gunHandler);
@@ -39,7 +39,7 @@ public class PlayerInput : MonoBehaviour
         }
         else
         {
-            UIHandler.instance.HidePickUpText();
+            GameManager.instance.HidePickUpText();
         }
     }
 }

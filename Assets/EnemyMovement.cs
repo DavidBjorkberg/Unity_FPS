@@ -5,11 +5,10 @@ using UnityEngine.AI;
 public class EnemyMovement : MonoBehaviour
 {
     public int movementSpeed;
-    public Transform[] waypoints;
-    public bool circulate;
-    NavMeshAgent navAgent;
-    int curWaypointTargetIndex;
-    float reachedTargetThreshold = 1;
+    public WaypointHandler waypointHandler;
+    private PlayerDetection playerDetection;
+    private NavMeshAgent navAgent;
+
     void Start()
     {
         navAgent = GetComponent<NavMeshAgent>();
@@ -18,25 +17,21 @@ public class EnemyMovement : MonoBehaviour
 
     void Update()
     {
-        if(HasReachedWaypoint())
+        if(playerDetection.IsPlayerInView())
         {
+
+        }
+        else if (waypointHandler.HasReachedWaypoint(transform.position))
+        {
+            waypointHandler.UpdateNextWaypointTargetIndex();
             MoveToNextWaypoint();
         }
     }
     /// <summary>
-    /// Increments curWaypointTargetIndex and Sets destination to the next waypoint
+    /// Modifies curWaypointTargetIndex and Sets destination to the next waypoint
     /// </summary>
     void MoveToNextWaypoint()
     {
-        curWaypointTargetIndex++;
-        navAgent.SetDestination(waypoints[curWaypointTargetIndex].position);
-    }
-    /// <summary>
-    /// Returns true if the enemy is within reachedTargetThreshold of the waypoint
-    /// </summary>
-    /// <returns></returns>
-    bool HasReachedWaypoint()
-    {
-        return Vector3.Distance(transform.position, waypoints[curWaypointTargetIndex].position) <= reachedTargetThreshold;
+        navAgent.SetDestination(waypointHandler.GetNextWaypoint());
     }
 }

@@ -48,32 +48,44 @@ public class BounceCamera : MonoBehaviour
     }
     Vector3 CalculatePosition(Vector3 lookFromPos, Vector3 lookAtPos)
     {
-        Physics.Raycast(lookFromPos, Vector3.forward, 1);
         Vector3 curTestSpot;
-        Vector3 testSpotToLookAtDir;
-        Vector3 testSpotToLookFromDir;
-        float testSpotToLookFromDistance;
-        float testSpotToLookAtDistance;
+
+        ////First test the cameras current position, to prevent unneccesary camera movements
+        //if(PositionTest(transform.position, lookFromPos, lookAtPos))
+        //{
+        //    //Don't move camera
+        //    return transform.position;
+        //}
+
         for (int i = 0; i < pointsInSphere.Length; i++)
         {
             curTestSpot = lookFromPos + pointsInSphere[i];
-            testSpotToLookAtDir = (lookAtPos - curTestSpot);
-            testSpotToLookFromDir = (lookFromPos - curTestSpot);
-            testSpotToLookFromDistance = testSpotToLookFromDir.magnitude;
-            testSpotToLookAtDistance = testSpotToLookFromDir.magnitude;
-            testSpotToLookFromDir.Normalize();
-            testSpotToLookAtDir.Normalize();
-            //Check if the path from the current test spot to the lookat position is clear 
-            //and that the path from current test spot to the lookFrom position is clear (so the entire ray is visible)
-            if (!Physics.Raycast(curTestSpot, testSpotToLookAtDir, testSpotToLookAtDistance * 0.9f))
+            if(PositionTest(curTestSpot,lookFromPos,lookAtPos))
             {
-                if (!Physics.Raycast(curTestSpot, testSpotToLookFromDir, testSpotToLookFromDistance * 0.9f))
-                {
-                        return curTestSpot;
-                }
+                return curTestSpot;
             }
         }
+        //Should never reach
         print("Couldn't find bounce camera position");
         return Vector3.zero;
+    }
+    bool PositionTest(Vector3 testSpot,Vector3 lookFromPos, Vector3 lookAtPos)
+    {
+        Vector3 testSpotToLookAtDir = (lookAtPos - testSpot);
+        Vector3 testSpotToLookFromDir = (lookFromPos - testSpot);
+        float testSpotToLookFromDistance = testSpotToLookFromDir.magnitude;
+        float testSpotToLookAtDistance = testSpotToLookFromDir.magnitude;
+        testSpotToLookFromDir.Normalize();
+        testSpotToLookAtDir.Normalize();
+        //Check if the path from the current test spot to the lookat position is clear 
+        //and that the path from current test spot to the lookFrom position is clear (so the entire ray is visible)
+        if (!Physics.Raycast(testSpot, testSpotToLookAtDir, testSpotToLookAtDistance * 0.9f))
+        {
+            if (!Physics.Raycast(testSpot, testSpotToLookFromDir, testSpotToLookFromDistance * 0.9f))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

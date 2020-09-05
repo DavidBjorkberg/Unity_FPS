@@ -24,7 +24,7 @@ public class WeaponPickup : MonoBehaviour
         if (gunHandler.currentGun.GetType() == pickUpGun.GetType())
         {
             gunHandler.RefillAmmo(gunHandler.currentGun);
-            UIHandler.instance.UpdateAmmoText(gunHandler.currentGun.maxAmmo, gunHandler.currentGun.curAmmo);
+            GameManager.instance.UpdateAmmoBar(gunHandler.currentGun.maxAmmo, gunHandler.currentGun.curAmmo);
 
             Destroy(gameObject);
         }
