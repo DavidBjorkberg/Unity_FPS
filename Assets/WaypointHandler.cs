@@ -6,23 +6,26 @@ public class WaypointHandler : MonoBehaviour
 {
     public bool circulate;
     internal int curWaypointTargetIndex = 1;
-    private Waypoint[] waypoints;
+    internal List<Waypoint> waypoints = new List<Waypoint>();
     private bool patrollingForward = true;
     private float reachedTargetThreshold = 1;
-    private void Start()
+    private void Awake()
     {
-        waypoints = new Waypoint[transform.childCount];
         for (int i = 0; i < transform.childCount; i++)
         {
-            waypoints[i] = transform.GetChild(i).GetComponent<Waypoint>();
+            waypoints.Add(transform.GetChild(i).GetComponent<Waypoint>());
         }
+    }
+    void Start()
+    {
         transform.parent = GameManager.instance.transform.Find("WaypointHandlers");
+        transform.position = new Vector3(transform.position.x,0,transform.position.z);
     }
     public void UpdateNextWaypointTargetIndex()
     {
         if (circulate)
         {
-            if (curWaypointTargetIndex == waypoints.Length - 1)
+            if (curWaypointTargetIndex == waypoints.Count - 1)
             {
                 curWaypointTargetIndex = 0;
             }
@@ -33,7 +36,7 @@ public class WaypointHandler : MonoBehaviour
         }
         else
         {
-            if (curWaypointTargetIndex == waypoints.Length - 1 || curWaypointTargetIndex == 0)
+            if (curWaypointTargetIndex == waypoints.Count - 1 || curWaypointTargetIndex == 0)
             {
                 patrollingForward = !patrollingForward;
             }
@@ -48,12 +51,26 @@ public class WaypointHandler : MonoBehaviour
             }
         }
     }
-    public Vector3 GetNextWaypoint()
+    public Vector3 GetCurrentWaypointPos()
     {
-       return waypoints[curWaypointTargetIndex].transform.position;
+        return waypoints[curWaypointTargetIndex].transform.position;
     }
-    public bool HasReachedWaypoint(Vector3 enemyPos)
+    public bool HasReachedWaypoint(Vector3 enemyPos, Waypoint target)
     {
-        return Vector3.Distance(enemyPos, waypoints[curWaypointTargetIndex].transform.position) <= reachedTargetThreshold;
+        print("Distance to waypoint: " + Vector3.Distance(enemyPos, target.transform.position));
+        return Vector3.Distance(enemyPos, target.transform.position) <= reachedTargetThreshold;
+    }
+    public Waypoint GetCurrentWaypoint()
+    {
+        if (curWaypointTargetIndex >= waypoints.Count || curWaypointTargetIndex < 0)
+        {
+            print("Tried to get waypoint: " + curWaypointTargetIndex + " but max is: " + waypoints.Count);
+        }
+        return waypoints[curWaypointTargetIndex];
+    }
+    public void DestroyWaypoint(int index)
+    {
+        Destroy(waypoints[index].gameObject);
+        waypoints.RemoveAt(index);
     }
 }

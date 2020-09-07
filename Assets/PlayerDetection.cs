@@ -6,14 +6,10 @@ public class PlayerDetection : MonoBehaviour
 {
     public Camera FieldOfViewCam;
     public Transform eyePos;
+    private EnemyStateHandler stateHandler;
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-
+        stateHandler = GetComponent<EnemyStateHandler>();
     }
     //Returns true if the enemy can see the player (defined by the enemy's camera frustum)
     public bool IsPlayerInView()
@@ -32,5 +28,21 @@ public class PlayerDetection : MonoBehaviour
             }
         }
         return false;
+    }
+    /// <summary>
+    /// Checks after secondsToWait if the player is still in line of sight, then switches to shooting/patrol state
+    /// </summary>
+    public IEnumerator CheckIfHeldLineOfSight()
+    {
+        float secondsToWait = 1;
+        yield return new WaitForSeconds(secondsToWait);
+        if (IsPlayerInView())
+        {
+            stateHandler.SwitchToShootingState();
+        }
+        else
+        {
+            stateHandler.SwitchToPatrolState();
+        }
     }
 }
