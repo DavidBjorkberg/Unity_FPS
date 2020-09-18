@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StandardGun : Gun
 {
-    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC)
+    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC,Collider pointBCollider)
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)
         {
@@ -25,7 +25,7 @@ public class StandardGun : Gun
         {
             hit.transform.root.TryGetComponent(out returnEnemy);
         }
-        else if (Physics.Raycast(pointB, (pointC - pointB), out hit, 1 << 10 | 1 << 11))
+        if (returnEnemy == null && Physics.Raycast(pointB, (pointC - pointB), out hit, 1 << 10 | 1 << 11))
         {
             hit.transform.root.TryGetComponent(out returnEnemy);
         }

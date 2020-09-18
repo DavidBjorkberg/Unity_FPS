@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PewpewGun : Gun
 {
-    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC)
+    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC,Collider pointBCollider)
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)
         {

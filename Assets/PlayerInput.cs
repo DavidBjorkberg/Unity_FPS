@@ -8,6 +8,8 @@ public class PlayerInput : MonoBehaviour
     public GunHandler gunHandler;
     public KeyCode shootButton;
     public KeyCode pickUpButton;
+    public KeyCode jumpButton;
+    public KeyCode switchWeaponButton;
     public LayerMask weaponPickUpLayer;
     private FPSCamera playerCamera;
     void Start()
@@ -21,9 +23,13 @@ public class PlayerInput : MonoBehaviour
         {
             gunHandler.Shoot();
         }
-        if (Input.GetKeyDown(KeyCode.Tab) && gunHandler.secondaryGun != null)
+        if (Input.GetKeyDown(switchWeaponButton) && gunHandler.secondaryGun != null)
         {
             gunHandler.SwitchWeapon();
+        }
+        if(Input.GetKeyDown(jumpButton))
+        {
+            playerMovement.Jump();
         }
         PickUpCheck();
     }
@@ -41,5 +47,9 @@ public class PlayerInput : MonoBehaviour
         {
             GameManager.instance.HidePickUpText();
         }
+    }
+    public bool IsJumpButtonPressed()
+    {
+        return Input.GetKey(jumpButton);
     }
 }

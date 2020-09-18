@@ -49,18 +49,10 @@ public class BounceCamera : MonoBehaviour
     Vector3 CalculatePosition(Vector3 lookFromPos, Vector3 lookAtPos)
     {
         Vector3 curTestSpot;
-
-        ////First test the cameras current position, to prevent unneccesary camera movements
-        //if(PositionTest(transform.position, lookFromPos, lookAtPos))
-        //{
-        //    //Don't move camera
-        //    return transform.position;
-        //}
-
         for (int i = 0; i < pointsInSphere.Length; i++)
         {
             curTestSpot = lookFromPos + pointsInSphere[i];
-            if(PositionTest(curTestSpot,lookFromPos,lookAtPos))
+            if(IsPositionViable(curTestSpot,lookFromPos,lookAtPos))
             {
                 return curTestSpot;
             }
@@ -69,7 +61,7 @@ public class BounceCamera : MonoBehaviour
         print("Couldn't find bounce camera position");
         return Vector3.zero;
     }
-    bool PositionTest(Vector3 testSpot,Vector3 lookFromPos, Vector3 lookAtPos)
+    bool IsPositionViable(Vector3 testSpot,Vector3 lookFromPos, Vector3 lookAtPos)
     {
         Vector3 testSpotToLookAtDir = (lookAtPos - testSpot);
         Vector3 testSpotToLookFromDir = (lookFromPos - testSpot);

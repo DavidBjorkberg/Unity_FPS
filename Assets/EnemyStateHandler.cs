@@ -4,31 +4,35 @@ using UnityEngine;
 
 public class EnemyStateHandler : MonoBehaviour
 {
-    private EnemyMovement movement;
     public WaypointHandler waypointHandler;
+    private EnemyMovement movement;
+    private EnemyColorController colorController;
     public enum States { Patrolling, Chasing, Shooting, DetectedPlayer, LookAround };
     private States state;
-
     void Awake()
     {
         movement = GetComponent<EnemyMovement>();
+        colorController = GetComponent<EnemyColorController>();
     }
- 
+
 
     public void SwitchToPatrolState()
     {
+        colorController.SwitchToStandardColour();
         movement.MoveToNextWaypoint();
         state = States.Patrolling;
         movement.navAgent.isStopped = false;
     }
     public void SwitchToDetectedPlayerState()
     {
+        colorController.SwitchToAwareColour();
         state = States.DetectedPlayer;
         movement.navAgent.isStopped = true;
 
     }
     public void SwitchToChasingState()
     {
+        colorController.SwitchToAwareColour(true);
         CreateWaypoint(Waypoint.EnemyWaypointBehaviour.LookAround, GameManager.instance.player.transform.position);
         movement.MoveToNextWaypoint();
         state = States.Chasing;
@@ -46,6 +50,7 @@ public class EnemyStateHandler : MonoBehaviour
     }
     public void SwitchToShootingState()
     {
+      
         state = States.Shooting;
         movement.navAgent.isStopped = true;
 

@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class WaypointHandler : MonoBehaviour
 {
     public bool circulate;
     internal int curWaypointTargetIndex = 1;
     internal List<Waypoint> waypoints = new List<Waypoint>();
+    internal float enemyHeight;
     private bool patrollingForward = true;
     private float reachedTargetThreshold = 1;
     private void Awake()
@@ -19,7 +20,7 @@ public class WaypointHandler : MonoBehaviour
     void Start()
     {
         transform.parent = GameManager.instance.transform.Find("WaypointHandlers");
-        transform.position = new Vector3(transform.position.x,0,transform.position.z);
+        transform.position = new Vector3(transform.position.x, 0, transform.position.z);
     }
     public void UpdateNextWaypointTargetIndex()
     {
@@ -57,15 +58,17 @@ public class WaypointHandler : MonoBehaviour
     }
     public bool HasReachedWaypoint(Vector3 enemyPos, Waypoint target)
     {
-        print("Distance to waypoint: " + Vector3.Distance(enemyPos, target.transform.position));
-        return Vector3.Distance(enemyPos, target.transform.position) <= reachedTargetThreshold;
+        //Check if waypoint and enemy is on the same plane, so Y can be ignored in distance check (Makes it easier to place waypoints)
+        if (Mathf.Abs(enemyPos.y - target.transform.position.y) < enemyHeight)
+        {
+            Vector3 enemyPosZeroY = new Vector3(enemyPos.x, 0, enemyPos.z);
+            Vector3 targetPosZeroY = new Vector3(target.transform.position.x, 0, target.transform.position.z);
+            return Vector3.Distance(enemyPosZeroY, targetPosZeroY) <= reachedTargetThreshold;
+        }
+        return false;
     }
     public Waypoint GetCurrentWaypoint()
     {
-        if (curWaypointTargetIndex >= waypoints.Count || curWaypointTargetIndex < 0)
-        {
-            print("Tried to get waypoint: " + curWaypointTargetIndex + " but max is: " + waypoints.Count);
-        }
         return waypoints[curWaypointTargetIndex];
     }
     public void DestroyWaypoint(int index)

@@ -11,7 +11,7 @@ public abstract class Gun : MonoBehaviour
     internal int curAmmo;
     protected float timeSinceLastShot;
 
-    public abstract void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC);
+    public abstract void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC, Collider pointBCollider);
     public abstract void EnemyShoot(PlayerHealth player);
 
     public void Initialize()

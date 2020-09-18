@@ -9,12 +9,11 @@ public class EnemyMovement : MonoBehaviour
     internal NavMeshAgent navAgent;
     private EnemyStateHandler stateHandler;
     internal bool isLookingAround;
-    private PlayerDetection playerDetection;
     void Awake()
     {
         navAgent = GetComponent<NavMeshAgent>();
+        waypointHandler.enemyHeight = navAgent.height;
         stateHandler = GetComponent<EnemyStateHandler>();
-        playerDetection = GetComponent<PlayerDetection>();
     }
 
     /// <summary>
@@ -36,16 +35,18 @@ public class EnemyMovement : MonoBehaviour
         stateHandler.SwitchToPatrolState();
     }
     /// <summary >
-    /// Rotates the enemy towards the point where the player was spotted over time.
+    /// Rotates the enemy towards rotationDir over time.
     /// </summary>
     public IEnumerator RotateTowardsDirection(Vector3 rotationDir)
     {
-        float rotateSpeed = 0.01f;
-        float distanceThreshold = 0.2f;
-        while (Vector3.Distance(transform.forward, rotationDir) >= distanceThreshold)
+        float rotateSpeed = 1f;
+        float lerpValue = 0;
+        Quaternion initialRotation = transform.rotation;
+        Quaternion lookAtRotation = Quaternion.LookRotation(rotationDir);
+        while (lerpValue < 1)
         {
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, rotationDir, rotateSpeed, 0);
-            transform.rotation = Quaternion.LookRotation(newDir);
+            transform.rotation = Quaternion.Slerp(initialRotation, lookAtRotation, lerpValue);
+            lerpValue += rotateSpeed * Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -60,7 +61,6 @@ public class EnemyMovement : MonoBehaviour
 
     public void MoveToNextWaypoint()
     {
-        print("Set destination to: " + waypointHandler.GetCurrentWaypointPos());
         navAgent.SetDestination(waypointHandler.GetCurrentWaypointPos());
     }
 }

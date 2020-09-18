@@ -33,6 +33,7 @@ public class EnemyBrain : MonoBehaviour
                     stateHandler.SwitchToDetectedPlayerState();
                     movement.StopRotating();
                     Vector3 rotateDir = (GameManager.instance.player.transform.position - transform.position).normalized;
+
                     yield return StartCoroutine(movement.RotateTowardsDirection(rotateDir));
                     yield return StartCoroutine(playerDetection.CheckIfHeldLineOfSight());
                 }

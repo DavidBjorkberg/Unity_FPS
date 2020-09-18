@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 922775176}
   - component: {fileID: 922775175}
   - component: {fileID: 922775174}
-  m_Layer: 8
+  m_Layer: 12
   m_Name: Ray
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,10 +110,11 @@ GameObject:
   - component: {fileID: 1361323651}
   - component: {fileID: 1361323652}
   - component: {fileID: 1361323653}
-  - component: {fileID: 1361323655}
   - component: {fileID: 1361323656}
   - component: {fileID: 1194394373}
-  m_Layer: 0
+  - component: {fileID: 723835734}
+  - component: {fileID: 723835740}
+  m_Layer: 12
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1e31ab612b217b43ab20b2e2217f410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 50
 --- !u!114 &1361323652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,25 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 2
-  characterController: {fileID: 1361323655}
---- !u!143 &1361323655
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1363312746573395726}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.5
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.22, z: 0}
+  jumpForce: 9
 --- !u!114 &1361323656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,9 +209,41 @@ MonoBehaviour:
   gunHandler: {fileID: 1361323656}
   shootButton: 323
   pickUpButton: 101
+  jumpButton: 32
+  switchWeaponButton: 9
   weaponPickUpLayer:
     serializedVersion: 2
     m_Bits: 512
+--- !u!54 &723835734
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363312746573395726}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!136 &723835740
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363312746573395726}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.46, z: 0}
 --- !u!1 &1750162453167681765
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,7 +253,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7825296006172338414}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GunHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +268,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1750162453167681765}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.352, y: -0.275, z: 0.631}
+  m_LocalPosition: {x: 0.352, y: -0.395, z: 0.511}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 922775173}
@@ -271,7 +287,7 @@ GameObject:
   - component: {fileID: 2536669366184345945}
   - component: {fileID: 3757149160264903246}
   - component: {fileID: 1067518554}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: FPS Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,7 +386,7 @@ GameObject:
   - component: {fileID: 7343007155633008002}
   - component: {fileID: 4156901878775568399}
   - component: {fileID: 6051751639480522701}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

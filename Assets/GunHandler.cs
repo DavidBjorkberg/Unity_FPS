@@ -14,6 +14,7 @@ public class GunHandler : MonoBehaviour
     private Vector3 pointA; //The three corners of the ray
     private Vector3 pointB;
     private Vector3 pointC;
+    private Collider pointBCollider; //Used for bazooka
     private Enemy hitEnemy; //Stores the enemy the ray hits (if any), this way the ray doesn't have to be recalculated for the player to shoot.
     private float rayAim;
     private Vector3 BToCLeftVector;
@@ -84,6 +85,7 @@ public class GunHandler : MonoBehaviour
         {
             hit.collider.transform.root.TryGetComponent(out hitEnemy);
             pointB = hit.point;
+            pointBCollider = hit.collider;
         }
         return hit;
     }
@@ -106,7 +108,7 @@ public class GunHandler : MonoBehaviour
     }
     public void Shoot()
     {
-        currentGun.Shoot(pointA, pointB, pointC);
+        currentGun.Shoot(pointA, pointB, pointC,pointBCollider);
     }
     /// <summary>
     /// Swaps current and secondary weapon
@@ -116,7 +118,7 @@ public class GunHandler : MonoBehaviour
         currentGun.gameObject.SetActive(false);
         secondaryGun.gameObject.SetActive(true);
 
-        //Switch the GunInfo's and the corresponding gameobjects
+    
         Gun tempGO = currentGun;
 
         currentGun = secondaryGun;
