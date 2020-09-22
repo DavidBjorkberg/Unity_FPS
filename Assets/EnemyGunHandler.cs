@@ -8,17 +8,10 @@ public class EnemyGunHandler : MonoBehaviour
     public Gun startGunPrefab;
     internal Gun currentGun;
     internal Transform gunPoint;
-    private PlayerDetection playerDetection;
     void Start()
     {
-        playerDetection = GetComponent<PlayerDetection>();
         currentGun = InstantiateGun(startGunPrefab);
     }
-
-    void Update()
-    {
-    }
-
     public void Shoot()
     {
         currentGun.EnemyShoot(GameManager.instance.player.GetComponent<PlayerHealth>());

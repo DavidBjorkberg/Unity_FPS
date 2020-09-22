@@ -91,7 +91,8 @@ public class BazookaBullet : MonoBehaviour
             }
             else if (hits[i].transform.root.TryGetComponent(out Enemy enemy))
             {
-                enemy.TakeDamage(damage);
+                Vector3 shotDir = (enemy.transform.position - transform.position).normalized;
+                enemy.TakeDamage(damage,shotDir,2);
             }
         }
         Destroy(gameObject);

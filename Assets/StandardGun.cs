@@ -14,7 +14,16 @@ public class StandardGun : Gun
             Enemy hitEnemy = HitEnemyCheck(pointA, pointB, pointC);
             if(hitEnemy != null)
             {
-                hitEnemy.TakeDamage(damage);
+                Vector3 shotDir;
+                if(pointC == null)
+                {
+                    shotDir = (hitEnemy.transform.position - pointA).normalized;
+                }
+                else
+                {
+                    shotDir = (hitEnemy.transform.position - pointB).normalized;
+                }
+                hitEnemy.TakeDamage(damage,shotDir, 1);
             }
         }
     }

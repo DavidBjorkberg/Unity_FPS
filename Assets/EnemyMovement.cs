@@ -55,8 +55,10 @@ public class EnemyMovement : MonoBehaviour
     /// </summary>
     public void StopRotating()
     {
-        StopCoroutine("RotateTowardsTarget");
+        StopCoroutine("RotateTowardsDirection");
         StopCoroutine("LookAroundForPlayer");
+        isLookingAround = false;
+
     }
 
     public void MoveToNextWaypoint()

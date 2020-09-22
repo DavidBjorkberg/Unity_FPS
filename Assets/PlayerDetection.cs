@@ -53,6 +53,9 @@ public class PlayerDetection : MonoBehaviour
             }
             yield return new WaitForFixedUpdate();
         }
-        stateHandler.SwitchToShootingState();
+        if (stateHandler.IsCurrentState(EnemyStateHandler.States.LookAround))
+        {
+            stateHandler.SwitchToShootingState();
+        }
     }
 }

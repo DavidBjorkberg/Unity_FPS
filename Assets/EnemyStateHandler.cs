@@ -7,15 +7,15 @@ public class EnemyStateHandler : MonoBehaviour
     public WaypointHandler waypointHandler;
     private EnemyMovement movement;
     private EnemyColorController colorController;
-    public enum States { Patrolling, Chasing, Shooting, DetectedPlayer, LookAround };
+    private PlayerDetection playerDetection;
+    public enum States { Patrolling, Chasing, Shooting, DetectedPlayer, LookAround, Dead };
     private States state;
     void Awake()
     {
         movement = GetComponent<EnemyMovement>();
         colorController = GetComponent<EnemyColorController>();
+        playerDetection = GetComponent<PlayerDetection>();
     }
-
-
     public void SwitchToPatrolState()
     {
         colorController.SwitchToStandardColour();
@@ -50,10 +50,16 @@ public class EnemyStateHandler : MonoBehaviour
     }
     public void SwitchToShootingState()
     {
-      
         state = States.Shooting;
         movement.navAgent.isStopped = true;
-
+    }
+    public void SwitchToDeadState()
+    {
+        colorController.SwitchToStandardColour();
+        state = States.Dead;
+        movement.StopRotating();
+        movement.navAgent.isStopped = true;
+        
     }
     public void SwitchToLookAroundState()
     {

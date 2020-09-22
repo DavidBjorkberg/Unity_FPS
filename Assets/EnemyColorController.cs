@@ -11,6 +11,7 @@ public class EnemyColorController : MonoBehaviour
     private Coroutine lerpColourCoroutine;
     public void SwitchToStandardColour()
     {
+        StopColourChange();
         for (int i = 0; i < modelComponents.Length; i++)
         {
             modelComponents[i].material.color = standardColour;
@@ -20,10 +21,8 @@ public class EnemyColorController : MonoBehaviour
     {
         if (lerpBetweenColours)
         {
-            if (lerpColourCoroutine != null)
-            {
-                StopCoroutine(lerpColourCoroutine);
-            }
+            StopColourChange();
+
             lerpColourCoroutine = StartCoroutine(LerpBetweenColours(modelComponents[0].material.color, awareColour));
         }
         else
@@ -37,15 +36,13 @@ public class EnemyColorController : MonoBehaviour
 
     public Coroutine SwitchToHostileColour()
     {
-        if (lerpColourCoroutine != null)
-        {
-            StopCoroutine(lerpColourCoroutine);
-        }
+        StopColourChange();
         lerpColourCoroutine = StartCoroutine(LerpBetweenColours(awareColour, hostileColour));
         return lerpColourCoroutine;
     }
     IEnumerator LerpBetweenColours(Color colorA, Color colorB)
     {
+        print("Started colour change");
         float lerpValue = 0;
         float changeColorSpeed = 1;
         Color lerpColor;
@@ -58,6 +55,15 @@ public class EnemyColorController : MonoBehaviour
             }
             lerpValue += changeColorSpeed * Time.deltaTime;
             yield return new WaitForFixedUpdate();
+        }
+        print("Completed colour change");
+    }
+    void StopColourChange()
+    {
+        if (lerpColourCoroutine != null)
+        {
+            print("Stopped colour change");
+            StopCoroutine(lerpColourCoroutine);
         }
     }
 }
