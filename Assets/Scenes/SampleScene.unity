@@ -4357,9 +4357,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c6a21e5ecc842f4988a7c539aa54c4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  standardColour: {r: 0, g: 0, b: 0, a: 0}
-  awareColour: {r: 0.98210716, g: 1, b: 0, a: 0}
-  hostileColour: {r: 1, g: 0, b: 0, a: 0}
+  standardColour: {r: 0, g: 0, b: 0, a: 1}
+  awareColour: {r: 0.98210716, g: 1, b: 0, a: 1}
+  hostileColour: {r: 1, g: 0, b: 0, a: 1}
   modelComponents:
   - {fileID: 5637181095763324574}
   - {fileID: 5637181095763324573}
@@ -5276,6 +5276,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 58198726, guid: 5e5d01ebb88905d4f94144e366d2fcd7, type: 3}
+      propertyPath: health
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 463718143, guid: 5e5d01ebb88905d4f94144e366d2fcd7, type: 3}
       propertyPath: m_LocalPosition.y
       value: 1.182

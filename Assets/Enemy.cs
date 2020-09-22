@@ -12,15 +12,15 @@ public class Enemy : MonoBehaviour
         colorController = GetComponent<EnemyColorController>();
         stateHandler = GetComponent<EnemyStateHandler>();
     }
-    public void TakeDamage(int amount,Vector3 shotDirection,float shotStrength)
+    public void TakeDamage(int amount, Vector3 shotDirection, float shotStrength)
     {
         health -= amount;
-        if(health <= 0)
+        if (health <= 0)
         {
             stateHandler.SwitchToDeadState();
             DisableEnemy();
             SetBodyPartsVelocity(shotDirection, shotStrength);
-            //Die();
+            StartCoroutine(FadeOut());
         }
     }
     void SetBodyPartsVelocity(Vector3 dir, float strength)
@@ -38,8 +38,21 @@ public class Enemy : MonoBehaviour
         transform.Find("Hitbox").gameObject.SetActive(false);
 
     }
-    void Die()
+    IEnumerator FadeOut()
     {
+        float fadeSpeed = 1;
+        Color objectColour = colorController.modelComponents[0].material.color;
+        float fadeAmount = objectColour.a;
+        while (fadeAmount > 0)
+        {
+            fadeAmount -= (fadeSpeed * Time.deltaTime);
+            for (int i = 0; i < colorController.modelComponents.Length; i++)
+            {
+                objectColour = new Color(objectColour.r, objectColour.g, objectColour.b, fadeAmount);
+                colorController.modelComponents[i].material.color = objectColour;
+                yield return new WaitForFixedUpdate();
+            }
+        }
         Destroy(gameObject);
     }
 }
