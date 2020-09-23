@@ -12,6 +12,7 @@ public abstract class Gun : MonoBehaviour
     protected float timeSinceLastShot;
 
     public abstract void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC, Collider pointBCollider);
+    public abstract void Shoot(Ray ray);
     public abstract void EnemyShoot(PlayerHealth player);
 
     public void Initialize()

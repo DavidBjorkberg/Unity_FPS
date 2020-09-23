@@ -41,14 +41,7 @@ public class PlayerMovement : MonoBehaviour
     }
     bool IsGrounded()
     {
-        if (Physics.SphereCast(transform.position, 0.5f, Vector3.down, out RaycastHit hit, 2))
-        {
-            if (hit.collider.TryGetComponent(out Obstacle obstacle))
-            {
-                return true;
-            }
-        }
-        return false;
+       return Physics.SphereCast(transform.position, 0.5f, Vector3.down, out RaycastHit hit, 2, 1 << 10);
     }
     bool HitWall(Vector3 walkDir)
     {

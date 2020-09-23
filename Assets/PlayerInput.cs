@@ -7,6 +7,7 @@ public class PlayerInput : MonoBehaviour
     public PlayerMovement playerMovement;
     public GunHandler gunHandler;
     public KeyCode shootButton;
+    public KeyCode rayButton;
     public KeyCode pickUpButton;
     public KeyCode jumpButton;
     public KeyCode switchWeaponButton;
@@ -30,6 +31,14 @@ public class PlayerInput : MonoBehaviour
         if(Input.GetKeyDown(jumpButton))
         {
             playerMovement.Jump();
+        }
+        if(Input.GetKeyDown(rayButton))
+        {
+            gunHandler.ActivateRay();
+        }
+        if(Input.GetKeyUp(rayButton))
+        {
+            gunHandler.DeactivateRay();
         }
         PickUpCheck();
     }

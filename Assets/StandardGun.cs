@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class StandardGun : Gun
 {
-    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC,Collider pointBCollider)
+    public override void Shoot(Vector3 pointA, Vector3 pointB, Vector3 pointC, Collider pointBCollider)
     {
         if (curAmmo > 0 && timeSinceLastShot > fireRate)
         {
@@ -12,10 +12,10 @@ public class StandardGun : Gun
             GameManager.instance.UpdateAmmoBar(maxAmmo, curAmmo);
             timeSinceLastShot = 0;
             Enemy hitEnemy = HitEnemyCheck(pointA, pointB, pointC);
-            if(hitEnemy != null)
+            if (hitEnemy != null)
             {
                 Vector3 shotDir;
-                if(pointC == null)
+                if (pointC == null)
                 {
                     shotDir = (hitEnemy.transform.position - pointA).normalized;
                 }
@@ -23,7 +23,23 @@ public class StandardGun : Gun
                 {
                     shotDir = (hitEnemy.transform.position - pointB).normalized;
                 }
-                hitEnemy.TakeDamage(damage,shotDir, 1);
+                hitEnemy.TakeDamage(damage, shotDir, 1);
+            }
+        }
+    }
+    public override void Shoot(Ray ray)
+    {
+        if (curAmmo > 0 && timeSinceLastShot > fireRate)
+        {
+            curAmmo--;
+            GameManager.instance.UpdateAmmoBar(maxAmmo, curAmmo);
+            timeSinceLastShot = 0;
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                if (hit.transform.root.TryGetComponent(out Enemy hitEnemy))
+                {
+                    hitEnemy.TakeDamage(damage, ray.direction, 1);
+                }
             }
         }
     }

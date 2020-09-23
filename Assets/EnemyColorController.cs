@@ -42,7 +42,6 @@ public class EnemyColorController : MonoBehaviour
     }
     IEnumerator LerpBetweenColours(Color colorA, Color colorB)
     {
-        print("Started colour change");
         float lerpValue = 0;
         float changeColorSpeed = 1;
         Color lerpColor;
@@ -56,13 +55,11 @@ public class EnemyColorController : MonoBehaviour
             lerpValue += changeColorSpeed * Time.deltaTime;
             yield return new WaitForFixedUpdate();
         }
-        print("Completed colour change");
     }
     void StopColourChange()
     {
         if (lerpColourCoroutine != null)
         {
-            print("Stopped colour change");
             StopCoroutine(lerpColourCoroutine);
         }
     }

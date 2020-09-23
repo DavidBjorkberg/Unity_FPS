@@ -1,16 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class GunHandler : MonoBehaviour
 {
     public RayGenerator ray;
     public BounceCamera bounceCamera;
     public GameObject gunHolder;
     public Gun startGunPrefab;
+    public Image crosshair;
     internal Gun currentGun;
     internal Gun secondaryGun;
     internal Transform gunPoint;
+    internal bool isRayActive;
     private Vector3 pointA; //The three corners of the ray
     private Vector3 pointB;
     private Vector3 pointC;
@@ -24,10 +26,24 @@ public class GunHandler : MonoBehaviour
     }
     void Update()
     {
-        AimRay();
-        CalculateRay();
-        DrawRay();
-        SetBounceCamera();
+        if (isRayActive)
+        {
+            AimRay();
+            CalculateRay();
+            DrawRay();
+            SetBounceCamera();
+        }
+        else
+        {
+            if (IsEnemyInCrosshair())
+            {
+                crosshair.color = Color.red;
+            }
+            else
+            {
+                crosshair.color = Color.white;
+            }
+        }
 
     }
     void CalculateRay()
@@ -44,6 +60,17 @@ public class GunHandler : MonoBehaviour
             CalculatePointC(pointBHit);
         }
 
+    }
+    bool IsEnemyInCrosshair()
+    {
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit))
+        {
+            if (hit.transform.root.TryGetComponent(out Enemy hitEnemy))
+            {
+                return true;
+            }
+        }
+        return false;
     }
     void DrawRay()
     {
@@ -108,7 +135,15 @@ public class GunHandler : MonoBehaviour
     }
     public void Shoot()
     {
-        currentGun.Shoot(pointA, pointB, pointC,pointBCollider);
+        if (isRayActive)
+        {
+            currentGun.Shoot(pointA, pointB, pointC, pointBCollider);
+        }
+        else
+        {
+            Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+            currentGun.Shoot(ray);
+        }
     }
     /// <summary>
     /// Swaps current and secondary weapon
@@ -118,7 +153,7 @@ public class GunHandler : MonoBehaviour
         currentGun.gameObject.SetActive(false);
         secondaryGun.gameObject.SetActive(true);
 
-    
+
         Gun tempGO = currentGun;
 
         currentGun = secondaryGun;
@@ -145,10 +180,21 @@ public class GunHandler : MonoBehaviour
         }
         else
         {
-            //Destroy current gun and replace with new
             Destroy(currentGun);
             currentGun = InstantiateGun(gun);
         }
+    }
+    public void ActivateRay()
+    {
+        isRayActive = true;
+        crosshair.gameObject.SetActive(false);
+    }
+    public void DeactivateRay()
+    {
+        crosshair.gameObject.SetActive(true);
+        isRayActive = false;
+        ray.ResetMesh();
+        bounceCamera.Deactivate();
     }
     Gun InstantiateGun(Gun gun)
     {

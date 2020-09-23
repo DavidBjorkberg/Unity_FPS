@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
     }
     IEnumerator FadeOut()
     {
-        float fadeSpeed = 1;
+        float fadeSpeed = 2;
         Color objectColour = colorController.modelComponents[0].material.color;
         float fadeAmount = objectColour.a;
         while (fadeAmount > 0)
